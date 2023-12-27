@@ -6,13 +6,14 @@ public class TicTacToe {
 
         System.out.print("Enter cells: ");
         String userInput = scanner.nextLine();
-
         char[][] gameBoard = createGameBoard(userInput);
         printGameBoard(gameBoard);
-        analyzeGame(gameBoard);
+
+        makeMove(scanner, gameBoard);
+
+        printGameBoard(gameBoard);
     }
 
-    // Метод для створення ігрового поля на основі введеного рядка
     public static char[][] createGameBoard(String input) {
         char[][] board = new char[3][3];
         int index = 0;
@@ -27,7 +28,6 @@ public class TicTacToe {
         return board;
     }
 
-    // Метод для виведення ігрового поля
     public static void printGameBoard(char[][] board) {
         System.out.println("---------");
 
@@ -42,60 +42,38 @@ public class TicTacToe {
         System.out.println("---------");
     }
 
-    // Метод для аналізу стану гри
-    public static void analyzeGame(char[][] board) {
-        if (checkImpossible(board)) {
-            System.out.println("Impossible");
-        } else if (checkWinner(board, 'X')) {
-            System.out.println("X wins");
-        } else if (checkWinner(board, 'O')) {
-            System.out.println("O wins");
-        } else if (checkDraw(board)) {
-            System.out.println("Draw");
-        } else {
-            System.out.println("Game not finished");
-        }
-    }
+    public static void makeMove(Scanner scanner, char[][] board) {
+        int row, col;
 
-    // Метод для перевірки неможливості гри
-    public static boolean checkImpossible(char[][] board) {
-        int countX = countSymbol(board, 'X');
-        int countO = countSymbol(board, 'O');
+        while (true) {
+            System.out.print("Enter the coordinates: ");
+            try {
+                row = scanner.nextInt();
+                col = scanner.nextInt();
+            } catch (Exception e) {
+                System.out.println("You should enter numbers!");
+                scanner.nextLine(); // Clear the input buffer
+                continue;
+            }
 
-        int diff = Math.abs(countX - countO);
-        return diff >= 2 || (checkWinner(board, 'X') && checkWinner(board, 'O'));
-    }
-
-    // Метод для перевірки переможця
-    public static boolean checkWinner(char[][] board, char symbol) {
-        for (int i = 0; i < 3; i++) {
-            // Перевірка по рядках та стовпцях
-            if ((board[i][0] == symbol && board[i][1] == symbol && board[i][2] == symbol) ||
-                    (board[0][i] == symbol && board[1][i] == symbol && board[2][i] == symbol)) {
-                return true;
+            if (isValidMove(row, col, board)) {
+                board[3 - col][row - 1] = 'X';
+                break;
             }
         }
-
-        // Перевірка по діагоналям
-        return (board[0][0] == symbol && board[1][1] == symbol && board[2][2] == symbol) ||
-                (board[0][2] == symbol && board[1][1] == symbol && board[2][0] == symbol);
     }
 
-    // Метод для перевірки нічиєї
-    public static boolean checkDraw(char[][] board) {
-        return !checkWinner(board, 'X') && !checkWinner(board, 'O') && countSymbol(board, '_') == 0;
-    }
-
-    // Метод для підрахунку кількості символів на ігровому полі
-    public static int countSymbol(char[][] board, char symbol) {
-        int count = 0;
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board[i].length; j++) {
-                if (board[i][j] == symbol) {
-                    count++;
-                }
-            }
+    public static boolean isValidMove(int row, int col, char[][] board) {
+        if (row < 1 || row > 3 || col < 1 || col > 3) {
+            System.out.println("Coordinates should be from 1 to 3!");
+            return false;
         }
-        return count;
+
+        if (board[3 - col][row - 1] != ' ') {
+            System.out.println("This cell is occupied! Choose another one!");
+            return false;
+        }
+
+        return true;
     }
 }
