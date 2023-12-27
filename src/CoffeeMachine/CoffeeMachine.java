@@ -11,44 +11,47 @@ public class CoffeeMachine {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        printMachineStatus();
+        while (true) {
+            System.out.println("Write action (buy, fill, take, remaining, exit):");
+            String action = scanner.nextLine();
 
-        System.out.println("Write action (buy, fill, take):");
-        String action = scanner.nextLine();
-
-        switch (action) {
-            case "buy":
-                buyCoffee(scanner);
-                break;
-            case "fill":
-                fillMachine(scanner);
-                break;
-            case "take":
-                takeMoney();
-                break;
-            default:
-                System.out.println("Invalid action. Please choose buy, fill, or take.");
+            switch (action) {
+                case "buy":
+                    buyCoffee(scanner);
+                    break;
+                case "fill":
+                    fillMachine(scanner);
+                    break;
+                case "take":
+                    takeMoney();
+                    break;
+                case "remaining":
+                    printMachineStatus();
+                    break;
+                case "exit":
+                    return;
+                default:
+                    System.out.println("Invalid action. Please choose buy, fill, take, remaining, or exit.");
+            }
         }
-
-        printMachineStatus();
-
-        scanner.close();
     }
 
     private static void buyCoffee(Scanner scanner) {
-        System.out.println("What do you want to buy? 1 - espresso, 2 - latte, 3 - cappuccino:");
-        int coffeeType = scanner.nextInt();
+        System.out.println("What do you want to buy? 1 - espresso, 2 - latte, 3 - cappuccino, back - to main menu:");
+        String coffeeType = scanner.nextLine();
 
         switch (coffeeType) {
-            case 1:
+            case "1":
                 makeCoffee(250, 0, 16, 4);
                 break;
-            case 2:
+            case "2":
                 makeCoffee(350, 75, 20, 7);
                 break;
-            case 3:
+            case "3":
                 makeCoffee(200, 100, 12, 6);
                 break;
+            case "back":
+                return;
             default:
                 System.out.println("Invalid coffee type.");
         }
@@ -56,7 +59,7 @@ public class CoffeeMachine {
 
     private static void makeCoffee(int water, int milk, int coffeeBeans, int cost) {
         if (waterAvailable >= water && milkAvailable >= milk && coffeeBeansAvailable >= coffeeBeans && disposableCups > 0) {
-            System.out.println("I have enough resources, making coffee!");
+            System.out.println("I have enough resources, making you a coffee!");
             waterAvailable -= water;
             milkAvailable -= milk;
             coffeeBeansAvailable -= coffeeBeans;
