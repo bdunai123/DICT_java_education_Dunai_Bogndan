@@ -53,6 +53,7 @@ public class hangman {
                 break;
             } else if (userInput.equals("play")) {
                 playHangman();
+                return; // Return to the main menu after playing
             }
 
             if (userInput.length() != 1 || !Character.isLetter(userInput.charAt(0))) {
@@ -70,7 +71,7 @@ public class hangman {
                 if (!displayWord(wordToGuess, guessedLetters).contains("-")) {
                     System.out.println("You guessed the word " + wordToGuess + "!");
                     System.out.println("You survived!");
-                    break;
+                    return; // Return to the main menu after winning
                 }
             } else {
                 attemptsLeft--;
@@ -81,6 +82,7 @@ public class hangman {
 
             if (attemptsLeft == 0) {
                 System.out.println("You lost!");
+                return; // Return to the main menu after losing
             }
         }
     }
