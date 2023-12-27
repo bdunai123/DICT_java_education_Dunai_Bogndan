@@ -3,29 +3,31 @@ import java.util.Scanner;
 public class TicTacToe {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-
-        System.out.print("Enter cells: ");
-        String userInput = scanner.nextLine();
-        char[][] gameBoard = createGameBoard(userInput);
-        printGameBoard(gameBoard);
-
-        makeMove(scanner, gameBoard);
+        char[][] gameBoard = createEmptyGameBoard();
 
         printGameBoard(gameBoard);
-    }
 
-    public static char[][] createGameBoard(String input) {
-        char[][] board = new char[3][3];
-        int index = 0;
+        char currentPlayer = 'X';
+        boolean gameFinished = false;
 
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board[i].length; j++) {
-                board[i][j] = input.charAt(index);
-                index++;
+        while (!gameFinished) {
+            makeMove(scanner, gameBoard, currentPlayer);
+            printGameBoard(gameBoard);
+
+            if (checkGameStatus(gameBoard, currentPlayer)) {
+                System.out.println(currentPlayer + " wins");
+                gameFinished = true;
+            } else if (isBoardFull(gameBoard)) {
+                System.out.println("Draw");
+                gameFinished = true;
+            } else {
+                currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
             }
         }
+    }
 
-        return board;
+    public static char[][] createEmptyGameBoard() {
+        return new char[][]{{' ', ' ', ' '}, {' ', ' ', ' '}, {' ', ' ', ' '}};
     }
 
     public static void printGameBoard(char[][] board) {
@@ -42,7 +44,7 @@ public class TicTacToe {
         System.out.println("---------");
     }
 
-    public static void makeMove(Scanner scanner, char[][] board) {
+    public static void makeMove(Scanner scanner, char[][] board, char currentPlayer) {
         int row, col;
 
         while (true) {
@@ -57,7 +59,7 @@ public class TicTacToe {
             }
 
             if (isValidMove(row, col, board)) {
-                board[3 - col][row - 1] = 'X';
+                board[3 - col][row - 1] = currentPlayer;
                 break;
             }
         }
@@ -74,6 +76,31 @@ public class TicTacToe {
             return false;
         }
 
+        return true;
+    }
+
+    public static boolean checkGameStatus(char[][] board, char currentPlayer) {
+        for (int i = 0; i < board.length; i++) {
+            // Check rows and columns
+            if ((board[i][0] == currentPlayer && board[i][1] == currentPlayer && board[i][2] == currentPlayer) ||
+                    (board[0][i] == currentPlayer && board[1][i] == currentPlayer && board[2][i] == currentPlayer)) {
+                return true;
+            }
+        }
+
+        // Check diagonals
+        return (board[0][0] == currentPlayer && board[1][1] == currentPlayer && board[2][2] == currentPlayer) ||
+                (board[0][2] == currentPlayer && board[1][1] == currentPlayer && board[2][0] == currentPlayer);
+    }
+
+    public static boolean isBoardFull(char[][] board) {
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[i].length; j++) {
+                if (board[i][j] == ' ') {
+                    return false;
+                }
+            }
+        }
         return true;
     }
 }
