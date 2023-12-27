@@ -12,8 +12,12 @@ public class hangman {
         // Випадковий вибір слова
         String secretWord = chooseWord(words);
 
+        // Підказка для гравця
+        String wordHint = generateWordHint(secretWord);
+
         // Виведення вказівки для гравця
-        System.out.print("Guess the word: ");
+        System.out.println("HANGMAN");
+        System.out.println("Guess the word " + wordHint + ": ");
 
         // Введення користувачем слова
         Scanner scanner = new Scanner(System.in);
@@ -40,5 +44,18 @@ public class hangman {
         Random random = new Random();
         int index = random.nextInt(words.length);
         return words[index];
+    }
+
+    // Функція для генерації підказки для гравця
+    private static String generateWordHint(String word) {
+        StringBuilder wordHint = new StringBuilder();
+        for (int i = 0; i < word.length(); i++) {
+            if (i < 2) {
+                wordHint.append(word.charAt(i));
+            } else {
+                wordHint.append("-");
+            }
+        }
+        return wordHint.toString();
     }
 }
