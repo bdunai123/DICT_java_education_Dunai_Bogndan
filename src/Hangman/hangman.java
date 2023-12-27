@@ -1,12 +1,16 @@
 import java.util.Scanner;
+import java.util.Random;
 
 public class hangman {
     public static void main(String[] args) {
+        // Список слів
+        String[] words = {"python", "java", "javascript", "kotlin"};
+
         // Виведення привітання
         displayIntro();
 
-        // Загадане слово
-        String secretWord = "java";
+        // Випадковий вибір слова
+        String secretWord = chooseWord(words);
 
         // Виведення вказівки для гравця
         System.out.print("Guess the word: ");
@@ -29,5 +33,12 @@ public class hangman {
     private static void displayIntro() {
         System.out.println("HANGMAN");
         System.out.println("Welcome to the Hangman Game!");
+    }
+
+    // Функція для вибору випадкового слова зі списку
+    private static String chooseWord(String[] words) {
+        Random random = new Random();
+        int index = random.nextInt(words.length);
+        return words[index];
     }
 }
