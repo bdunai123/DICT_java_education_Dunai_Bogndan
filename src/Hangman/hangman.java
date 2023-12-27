@@ -24,13 +24,13 @@ public class hangman {
         // Введення користувачем букв
         Scanner scanner = new Scanner(System.in);
 
-        // Лічильник спроб
-        int attemptsLeft = 8;
+        // Лічильник життів
+        int lives = 8;
 
         // Масив для зберігання вже введених букв
         boolean[] guessedLetters = new boolean[26];
 
-        while (attemptsLeft > 0) {
+        while (lives > 0) {
             // Введення букви
             System.out.print("Input a letter: ");
             char guessedLetter = scanner.next().charAt(0);
@@ -46,27 +46,29 @@ public class hangman {
 
             // Перевірка, чи буква є в слові
             if (checkLetter(secretWord, guessedLetter)) {
+                // Перевірка, чи гравець вгадав всі літери і має ще спроби
+                if (displayedWord.indexOf("-") == -1 && lives > 0) {
+                    System.out.println("You guessed the word!");
+                    System.out.println("You survived!");
+                    break;
+                }
+
+                // Оновлення виведеного слова після введення правильної букви
                 updateDisplayedWord(secretWord, displayedWord, guessedLetter);
                 System.out.println(displayedWord);
             } else {
-                System.out.println("That letter doesn't appear in the word");
-                attemptsLeft--;
-                System.out.println(displayedWord);
-            }
-
-            // Перевірка, чи гравець вгадав слово
-            if (displayedWord.toString().equals(secretWord)) {
-                System.out.println("Congratulations! You guessed the word: " + secretWord);
-                break;
+                // Зменшення кількості спроб і виведення відповідного повідомлення
+                lives--;
+                if (lives > 0) {
+                    System.out.println("That letter doesn't appear in the word");
+                    System.out.println(displayedWord);
+                } else {
+                    System.out.println("You lost!");
+                }
             }
         }
 
-        // Закінчення гри
-        if (attemptsLeft == 0) {
-            System.out.println("Thanks for playing!");
-            System.out.println("We'll see how well you did in the next stage");
-        }
-
+        // Закриття сканера
         scanner.close();
     }
 
