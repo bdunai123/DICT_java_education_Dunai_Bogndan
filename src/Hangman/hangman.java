@@ -12,22 +12,59 @@ public class hangman {
         // Випадковий вибір слова
         String secretWord = chooseWord(words);
 
-        // Підказка для гравця
-        String wordHint = generateWordHint(secretWord);
+        // Ініціалізація виведеного слова
+        StringBuilder displayedWord = new StringBuilder();
+        for (int i = 0; i < secretWord.length(); i++) {
+            displayedWord.append("-");
+        }
 
         // Виведення вказівки для гравця
-        System.out.println("HANGMAN");
-        System.out.println("Guess the word " + wordHint + ": ");
+        System.out.println(displayedWord);
 
-        // Введення користувачем слова
+        // Введення користувачем букв
         Scanner scanner = new Scanner(System.in);
-        String guessedWord = scanner.next();
 
-        // Перевірка правильності введеного слова
-        if (guessedWord.equals(secretWord)) {
-            System.out.println("You survived!");
-        } else {
-            System.out.println("You lost!");
+        // Лічильник спроб
+        int attemptsLeft = 8;
+
+        // Масив для зберігання вже введених букв
+        boolean[] guessedLetters = new boolean[26];
+
+        while (attemptsLeft > 0) {
+            // Введення букви
+            System.out.print("Input a letter: ");
+            char guessedLetter = scanner.next().charAt(0);
+
+            // Перевірка, чи буква вже вводилась
+            if (guessedLetters[guessedLetter - 'a']) {
+                System.out.println("You already guessed that letter. Try again.");
+                continue;
+            }
+
+            // Додавання букви до вже введених
+            guessedLetters[guessedLetter - 'a'] = true;
+
+            // Перевірка, чи буква є в слові
+            if (checkLetter(secretWord, guessedLetter)) {
+                updateDisplayedWord(secretWord, displayedWord, guessedLetter);
+                System.out.println(displayedWord);
+            } else {
+                System.out.println("That letter doesn't appear in the word");
+                attemptsLeft--;
+                System.out.println(displayedWord);
+            }
+
+            // Перевірка, чи гравець вгадав слово
+            if (displayedWord.toString().equals(secretWord)) {
+                System.out.println("Congratulations! You guessed the word: " + secretWord);
+                break;
+            }
+        }
+
+        // Закінчення гри
+        if (attemptsLeft == 0) {
+            System.out.println("Thanks for playing!");
+            System.out.println("We'll see how well you did in the next stage");
         }
 
         scanner.close();
@@ -46,16 +83,17 @@ public class hangman {
         return words[index];
     }
 
-    // Функція для генерації підказки для гравця
-    private static String generateWordHint(String word) {
-        StringBuilder wordHint = new StringBuilder();
-        for (int i = 0; i < word.length(); i++) {
-            if (i < 2) {
-                wordHint.append(word.charAt(i));
-            } else {
-                wordHint.append("-");
+    // Функція для перевірки, чи буква є в слові
+    private static boolean checkLetter(String word, char letter) {
+        return word.indexOf(letter) != -1;
+    }
+
+    // Функція для оновлення виведеного слова після введення правильної букви
+    private static void updateDisplayedWord(String secretWord, StringBuilder displayedWord, char guessedLetter) {
+        for (int i = 0; i < secretWord.length(); i++) {
+            if (secretWord.charAt(i) == guessedLetter) {
+                displayedWord.setCharAt(i, guessedLetter);
             }
         }
-        return wordHint.toString();
     }
 }
