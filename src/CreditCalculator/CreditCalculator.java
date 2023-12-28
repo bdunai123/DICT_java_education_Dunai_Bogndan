@@ -1,107 +1,83 @@
 import java.util.Scanner;
 
 public class CreditCalculator {
-
     public static void main(String[] args) {
-        // Створення об'єкта Scanner для отримання введених користувачем даних
         Scanner scanner = new Scanner(System.in);
 
-        // Запит користувача на вибір параметра для обчислення
         System.out.println("What do you want to calculate?");
-        System.out.println("type \"n\" for number of monthly payments,");
-        System.out.println("type \"a\" for annuity monthly payment amount,");
-        System.out.println("type \"p\" for loan principal:");
-        char calculationType = scanner.next().charAt(0);
+        System.out.println("Type \"n\" for the number of monthly payments,");
+        System.out.println("Type \"a\" for annuity monthly payment amount,");
+        System.out.println("Type \"p\" for loan principal:");
 
-        double loanPrincipal = 0;
-        double monthlyPayment = 0;
-        int numberOfPayments = 0;
-        double interestRate = 0;
+        String calculationType = scanner.next();
 
-        // Запит користувача на введення параметрів
-        if (calculationType == 'n') {
-            System.out.println("Enter the loan principal:");
-            loanPrincipal = scanner.nextDouble();
-            System.out.println("Enter the monthly payment:");
-            monthlyPayment = scanner.nextDouble();
-            System.out.println("Enter the loan interest:");
-            interestRate = scanner.nextDouble();
-        } else if (calculationType == 'a') {
-            System.out.println("Enter the loan principal:");
-            loanPrincipal = scanner.nextDouble();
-            System.out.println("Enter the number of periods:");
-            numberOfPayments = scanner.nextInt();
-            System.out.println("Enter the loan interest:");
-            interestRate = scanner.nextDouble();
-        } else if (calculationType == 'p') {
-            System.out.println("Enter the annuity payment:");
-            monthlyPayment = scanner.nextDouble();
-            System.out.println("Enter the number of periods:");
-            numberOfPayments = scanner.nextInt();
-            System.out.println("Enter the loan interest:");
-            interestRate = scanner.nextDouble();
-        }
+        double principal = 0, payment = 0, interest = 0;
+        int periods = 0;
 
-        // Розрахунок і вивід результату
-        calculateAndPrintResult(calculationType, loanPrincipal, monthlyPayment, numberOfPayments, interestRate);
-
-        // Закриваємо Scanner
-        scanner.close();
-    }
-
-    private static void calculateAndPrintResult(char calculationType, double loanPrincipal,
-                                                double monthlyPayment, int numberOfPayments, double interestRate) {
-        // Розрахунок номінальної процентної ставки
-        double nominalRate = interestRate / 100 / 12;
-
-        // Розрахунок залежно від типу обчислення
         switch (calculationType) {
-            case 'n':
-                // Розрахунок кількості місяців
-                numberOfPayments = (int) Math.ceil(Math.log(monthlyPayment / (monthlyPayment - nominalRate * loanPrincipal))
-                        / Math.log(1 + nominalRate));
+            case "n":
+                System.out.println("Enter the loan principal:");
+                principal = scanner.nextDouble();
+                System.out.println("Enter the monthly payment:");
+                payment = scanner.nextDouble();
+                System.out.println("Enter the loan interest:");
+                interest = scanner.nextDouble() / 100 / 12;
+                periods = calculateNumberOfPayments(principal, payment, interest);
                 break;
-            case 'a':
-                // Розрахунок щомісячного платежу
-                monthlyPayment = loanPrincipal * (nominalRate * Math.pow(1 + nominalRate, numberOfPayments))
-                        / (Math.pow(1 + nominalRate, numberOfPayments) - 1);
+
+            case "a":
+                System.out.println("Enter the loan principal:");
+                principal = scanner.nextDouble();
+                System.out.println("Enter the number of periods:");
+                periods = scanner.nextInt();
+                System.out.println("Enter the loan interest:");
+                interest = scanner.nextDouble() / 100 / 12;
+                payment = calculateAnnuityPayment(principal, periods, interest);
                 break;
-            case 'p':
-                // Розрахунок основної суми кредиту
-                loanPrincipal = monthlyPayment / ((nominalRate * Math.pow(1 + nominalRate, numberOfPayments))
-                        / (Math.pow(1 + nominalRate, numberOfPayments) - 1));
+
+            case "p":
+                System.out.println("Enter the annuity payment:");
+                payment = scanner.nextDouble();
+                System.out.println("Enter the number of periods:");
+                periods = scanner.nextInt();
+                System.out.println("Enter the loan interest:");
+                interest = scanner.nextDouble() / 100 / 12;
+                principal = calculateLoanPrincipal(payment, periods, interest);
                 break;
+
+            default:
+                System.out.println("Incorrect calculation type");
+                return;
         }
 
-        // Виведення результату
-        printResult(calculationType, loanPrincipal, monthlyPayment, numberOfPayments);
+        System.out.println(getResultMessage(calculationType, principal, payment, periods, interest));
     }
 
-    private static void printResult(char calculationType, double loanPrincipal, double monthlyPayment, int numberOfPayments) {
-        // Виведення результату в зрозумілій формі
-        switch (calculationType) {
-            case 'n':
-                System.out.println("It will take " + formatMonthsToYearsAndMonths(numberOfPayments) + " to repay this loan!");
-                break;
-            case 'a':
-                System.out.println("Your monthly payment = " + (int) Math.ceil(monthlyPayment) + "!");
-                break;
-            case 'p':
-                System.out.println("Your loan principal = " + (int) Math.ceil(loanPrincipal) + "!");
-                break;
-        }
+    private static int calculateNumberOfPayments(double principal, double payment, double interest) {
+        return (int) Math.ceil(Math.log(payment / (payment - interest * principal)) / Math.log(1 + interest));
     }
 
-    private static String formatMonthsToYearsAndMonths(int months) {
-        int years = months / 12;
-        int remainingMonths = months % 12;
+    private static double calculateAnnuityPayment(double principal, int periods, double interest) {
+        return principal * interest * Math.pow(1 + interest, periods) / (Math.pow(1 + interest, periods) - 1);
+    }
 
-        if (years > 0 && remainingMonths > 0) {
-            return years + " years and " + remainingMonths + " months";
-        } else if (years > 0) {
-            return years + " years";
-        } else {
-            return remainingMonths + " months";
+    private static double calculateLoanPrincipal(double payment, int periods, double interest) {
+        return payment / (interest * Math.pow(1 + interest, periods) / (Math.pow(1 + interest, periods) - 1));
+    }
+
+    private static String getResultMessage(String type, double principal, double payment, int periods, double interest) {
+        switch (type) {
+            case "n":
+                return String.format("It will take %d years and %d months to repay this loan!", periods / 12, periods % 12);
+
+            case "a":
+                return String.format("Your monthly payment = %.0f!", payment);
+
+            case "p":
+                return String.format("Your loan principal = %.0f!", principal);
+
+            default:
+                return "Incorrect calculation type";
         }
     }
 }
