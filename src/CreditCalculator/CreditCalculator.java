@@ -1,30 +1,38 @@
+import java.util.Scanner;
+
 public class CreditCalculator {
 
     public static void main(String[] args) {
-        // Вхідні дані
-        double loanPrincipal = 1000; // Основна сума кредиту
-        double interestRate = 0.05; // Відсоткова ставка (5%)
+        // Створення об'єкта Scanner для отримання введених користувачем даних
+        Scanner scanner = new Scanner(System.in);
 
-        // Вивід текстового повідомлення про початок розрахунків
-        System.out.println("Loan principal: " + loanPrincipal);
+        // Запит користувача на введення суми кредиту
+        System.out.println("Enter the loan principal:");
+        double loanPrincipal = scanner.nextDouble();
 
-        // Розрахунок та вивід інформації за кожен місяць
-        int month = 1;
-        while (loanPrincipal > 0) {
-            double interest = loanPrincipal * interestRate; // Розрахунок відсотків за місяць
-            double monthlyPayment = Math.min(loanPrincipal + interest, 250); // Щомісячний платіж
+        // Запит користувача на вибір розрахунку
+        System.out.println("What do you want to calculate?");
+        System.out.println("type \"m\" – for number of monthly payments,");
+        System.out.println("type \"p\" – for the monthly payment:");
+        char calculationType = scanner.next().charAt(0);
 
-            // Вивід інформації за поточний місяць
-            System.out.println("Month " + month + ": repaid " + monthlyPayment);
-
-            // Оновлення залишку кредиту
-            loanPrincipal -= (monthlyPayment - interest);
-
-            // Інкремент місяця
-            month++;
+        if (calculationType == 'm') {
+            // Розрахунок кількості місяців
+            System.out.println("Enter the monthly payment:");
+            double monthlyPayment = scanner.nextDouble();
+            int months = (int) Math.ceil(loanPrincipal / monthlyPayment);
+            System.out.println("It will take " + months + " months to repay the loan");
+        } else if (calculationType == 'p') {
+            // Розрахунок щомісячного платежу
+            System.out.println("Enter the number of months:");
+            int numberOfMonths = scanner.nextInt();
+            double monthlyPayment = loanPrincipal / numberOfMonths;
+            double lastPayment = loanPrincipal - (numberOfMonths - 1) * monthlyPayment;
+            System.out.println("Your monthly payment = " + (int) Math.ceil(monthlyPayment));
+            System.out.println("and the last payment = " + (int) Math.ceil(lastPayment));
         }
 
-        // Вивід повідомлення про завершення погашення кредиту
-        System.out.println("The loan has been repaid!");
+        // Закриваємо Scanner
+        scanner.close();
     }
 }
